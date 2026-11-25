@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador de Servidor de Descargas</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <h1>Simulador de Servidor de Descargas</h1>
+    <p>
+      Un servidor solo puede atender un número limitado de descargas a la vez.
+      ¿Qué pasa si muchos clientes (<b>hilos</b>) llegan juntos y nadie controla la entrada?
+    </p>
+  </header>
+
+  <main>
+    <!-- 1. CONFIGURACIÓN -->
+    <section class="tarjeta" id="config">
+      <h2><span class="paso">1</span> Configurar la simulación</h2>
+      <form id="form-config" novalidate>
+        <div class="opciones">
+          <fieldset>
+            <legend>Recurso compartido</legend>
+            <label class="opcion">
+              <input type="radio" name="tipo" value="basico" checked>
+              <span><b>Básico</b><small>Un contador de conexiones (entero)</small></span>
+            </label>
+            <label class="opcion">
+              <input type="radio" name="tipo" value="complejo">
+              <span><b>Complejo</b><small>Ventanillas (slots) con datos + total de MB</small></span>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Sincronización</legend>
+            <label class="opcion">
+              <input type="radio" name="sync" value="sin" checked>
+              <span><b>Sin control</b><small>Muestra el problema</small></span>
+            </label>
+            <label class="opcion">
+              <input type="radio" name="sync" value="con">
+              <span><b>Con Lock</b><small>threading.Lock() — muestra la solución</small></span>
+            </label>
+          </fieldset>
+        </div>
+
+        <div class="numeros">
+          <label>Capacidad del servidor
+            <input type="number" id="capacidad" value="3" min="1" max="10">
+          </label>
+          <label>Clientes (hilos)
+            <input type="number" id="clientes" value="6" min="1" max="30">
+          </label>
+          <label>Velocidad de la animación
+            <select id="velocidad">
+              <option value="1200">Lenta</option>
+              <option value="600" selected>Normal</option>
+              <option value="150">Rápida</option>
+              <option value="0">Sin animación</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="botones">
+          <button type="submit" id="btn-ejecutar" class="primario">▶ Ejecutar simulación</button>
+          <button type="button" id="btn-comparar">Comparar los 4 escenarios</button>
+        </div>
+        <p id="mensaje-error" class="error" hidden></p>
+      </form>
+
+      <div id="que-pasara" class="explicacion"></div>
+    </section>
+
+    <!-- 2. EJECUCIÓN DE LOS HILOS -->
+    <section class="tarjeta" id="ejecucion" hidden>
+      <div class="titulo-seccion">
+        <h2><span class="paso">2</span> Ejecución de los hilos</h2>
+        <button type="button" id="btn-saltar">Saltar al final ⏭</button>
+      </div>
+      <div id="recurso-vivo" class="recurso"></div>
+      <div class="tabla-scroll" id="contenedor-eventos">
+        <table id="tabla-eventos">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tiempo</th>
+              <th>Hilo</th>
+              <th>Cliente</th>
+              <th>Operación solicitada</th>
+              <th>Estado antes</th>
+              <th>Resultado</th>
+              <th>Estado después</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. RESULTADO -->
+    <section class="tarjeta" id="resultado" hidden>
+      <h2><span class="paso">3</span> Resultado</h2>
+      <div id="veredicto"></div>
+      <div id="metricas" class="metricas"></div>
+
+      <h3>Estado final del recurso compartido</h3>
+      <div id="estado-final"></div>
+
+      <h3>Línea de tiempo de los hilos</h3>
+      <div id="linea-tiempo"></div>
+
+      <h3>¿Por qué pasó esto?</h3>
+      <div id="porque" class="explicacion"></div>
+    </section>
+
+    <!-- COMPARACIÓN -->
+    <section class="tarjeta" id="comparacion" hidden>
+      <h2>Comparación: sin control vs con Lock</h2>
+      <div id="tabla-comparacion"></div>
+    </section>
+  </main>
+
+  <footer class="pie">Proyecto de Sistemas Operativos · Simulación de concurrencia con hilos en Python</footer>
+  <script src="app.js"></script>
+</body>
+</html>
